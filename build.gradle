@@ -24,10 +24,7 @@ repositories {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
-    maven {
-        name = 'sk89q'
-        url = 'http://maven.sk89q.com/repo/'
-    }
+   
     // Needed for NMS dependencies, courtesy of Spigot's BuildTools
     mavenLocal()
 }
@@ -35,7 +32,6 @@ repositories {
 dependencies {
     compile 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
     compile 'org.spigotmc:spigot:1.13.2-R0.1-SNAPSHOT'
-    compile 'com.sk89q.worldedit:worldedit-bukkit:7.0.0-SNAPSHOT'
 }
 
 processResources {
