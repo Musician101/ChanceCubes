@@ -1,48 +1,46 @@
 package chanceCubes.rewards.rewardparts;
 
-import chanceCubes.items.CCubesItems;
+import chanceCubes.blocks.CCubesBlocks;
+import chanceCubes.rewards.variableTypes.IntVar;
 import chanceCubes.util.RewardsUtil;
-import java.util.Random;
-import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemStack;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class ChestChanceItem {
+public class ChestChanceItem extends BasePart
+{
+	private String mod;
+	private String item;
+	private IntVar amount;
+	private IntVar chance;
 
-    public static String[] elements = new String[]{"item:I", "chance:I", "meta:I", "amountMin:I", "amountMax:I"};
+	public ChestChanceItem(String item, IntVar chance, IntVar amount)
+	{
+		this.mod = item.substring(0, item.indexOf(":"));
+		this.item = item.substring(item.indexOf(":") + 1);
+		this.chance = chance;
+		this.amount = amount;
+	}
 
-    private static Random rand = new Random();
-    private int amountMax;
-    private int amountMin;
-    private int chance;
-    private String item;
-    private int meta;
-    private String mod;
+	private ItemStack getItemStack(int amount)
+	{
+		ItemStack stack = RewardsUtil.getItemStack(mod, item, amount);
+		if(stack.getType() == Material.AIR)
+		{
+			stack = new ItemStack(RewardsUtil.getBlock(mod, item), amount);
+			if(stack.getType() == Material.AIR)
+				stack = CCubesBlocks.getChanceCube(1);
+		}
 
-    public ChestChanceItem(String item, int meta, int chance, int amountMin, int amountMax) {
-        this.mod = item.substring(0, item.indexOf(":"));
-        this.item = item.substring(item.indexOf(":") + 1);
-        this.meta = meta;
-        this.chance = chance;
-        this.amountMin = amountMin;
-        this.amountMax = amountMax;
-    }
+		return stack;
+	}
 
-    public int getChance() {
-        return this.chance;
-    }
+	public ItemStack getRandomItemStack()
+	{
+		return this.getItemStack(amount.getIntValue());
+	}
 
-    private ItemStack getItemStack(int amount, int meta) {
-        ItemStack stack = RewardsUtil.getItemStack(mod, item, amount, meta);
-        if (stack == null) {
-            stack = CraftItemStack.asBukkitCopy(new net.minecraft.server.v1_10_R1.ItemStack(RewardsUtil.getBlock(mod, item), amount, meta));
-            if (stack.getType() == null)
-                stack = CCubesItems.chanceCube.clone();
-        }
-
-        return stack;
-    }
-
-    public ItemStack getRandomItemStack() {
-        return getItemStack(rand.nextInt(amountMax - amountMin) + amountMin, meta);
-    }
+	public int getChance()
+	{
+		return this.chance.getIntValue();
+	}
 }

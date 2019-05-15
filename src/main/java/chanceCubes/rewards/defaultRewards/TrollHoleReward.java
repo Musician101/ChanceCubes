@@ -1,55 +1,41 @@
 package chanceCubes.rewards.defaultRewards;
 
 import chanceCubes.CCubesCore;
-import java.util.HashMap;
-import java.util.Map;
-import org.bukkit.Bukkit;
+import chanceCubes.util.RewardBlockCache;
+import chanceCubes.util.Scheduler;
+import chanceCubes.util.Task;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
-public class TrollHoleReward implements IChanceCubeReward {
+public class TrollHoleReward extends BaseCustomReward
+{
+	public TrollHoleReward()
+	{
+		super(CCubesCore.MODID + ":Troll_Hole", -20);
+	}
 
-    public void fillHole(Location location, Player player, Map<Material, BlockState> storedBlocks) {
-        storedBlocks.forEach((material, blockState) -> {
-            blockState.setType(material);
-            blockState.update(true);
-        });
+	@Override
+	public void trigger(Location location, Player player)
+	{
+		final Location worldPos = player.getLocation().clone().add(0, -1, 0);
+		final RewardBlockCache cache = new RewardBlockCache(worldPos, player.getLocation());
 
-        player.teleport(location.add(0, 1, 0));
-    }
+		for(int y = 0; y > -75; y--)
+			for(int x = -2; x < 3; x++)
+				for(int z = -2; z < 3; z++)
+					cache.cacheBlock(new Vector(x, y, z), Material.AIR.createBlockData());
 
-    @Override
-    public int getChanceValue() {
-        return -20;
-    }
+		Scheduler.scheduleTask(new Task("TrollHole", 35)
+		{
+			@Override
+			public void callback()
+			{
+				cache.restoreBlocks(player);
+			}
 
-    @Override
-    public String getName() {
-        return CCubesCore.instance().getName().toLowerCase() + ":TrollHole";
-    }
+		});
 
-    @Override
-    public void trigger(final Location location, final Player player) {
-
-        final Map<Material, BlockState> storedBlocks = new HashMap<>();
-        Location playerLoc = player.getLocation();
-        final int px = playerLoc.getBlockX();
-        final int py = playerLoc.getBlockY() - 1;
-        final int pz = playerLoc.getBlockZ();
-
-        for (int y = 0; y < 75; y++) {
-            for (int x = -2; x < 3; x++) {
-                for (int z = -2; z < 3; z++) {
-                    BlockState blockState = new Location(player.getWorld(), px + x, py - y, pz + x).getBlock().getState();
-                    storedBlocks.put(blockState.getType(), blockState);
-                    blockState.setType(Material.AIR);
-                    blockState.update(true);
-                }
-            }
-        }
-
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CCubesCore.instance(), () -> fillHole(new Location(player.getWorld(), px, py, pz), player, storedBlocks), 35);
-    }
+	}
 }

@@ -1,32 +1,49 @@
 package chanceCubes.rewards.rewardparts;
 
+import chanceCubes.rewards.variableTypes.IntVar;
+import chanceCubes.rewards.variableTypes.NBTVar;
+import net.minecraft.server.v1_13_R2.NBTTagCompound;
+import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
-public class ItemPart {
+public class ItemPart extends BasePart
+{
+	private NBTVar itemNBT;
 
-    public static String[] elements = new String[]{"experienceAmount:I", "delay:I", "numberOfOrbs:I"};
-    private int delay = 0;
-    private ItemStack stack;
+	public ItemPart(ItemStack stack)
+	{
+		this(stack, 0);
+	}
 
-    public ItemPart(ItemStack stack) {
-        this.stack = stack;
-    }
+	public ItemPart(ItemStack stack, int delay)
+	{
+		this(stack, new IntVar(delay));
+	}
 
-    public ItemPart(ItemStack stack, int delay) {
-        this.stack = stack;
-        this.delay = delay;
-    }
+	public ItemPart(ItemStack stack, IntVar delay)
+	{
+		this.itemNBT = new NBTVar(CraftItemStack.asNMSCopy(stack).save(new NBTTagCompound()));
+		this.setDelay(delay);
+	}
 
-    public int getDelay() {
-        return delay;
-    }
+	public ItemPart(String nbt)
+	{
+		this(new NBTVar(nbt), new IntVar(0));
+	}
 
-    public ItemPart setDelay(int delay) {
-        this.delay = delay;
-        return this;
-    }
+	public ItemPart(NBTVar nbt)
+	{
+		this(nbt, new IntVar(0));
+	}
 
-    public ItemStack getItemStack() {
-        return stack;
-    }
+	public ItemPart(NBTVar nbt, IntVar delay)
+	{
+		this.itemNBT = nbt;
+		this.setDelay(delay);
+	}
+
+	public ItemStack getItemStack()
+	{
+		return CraftItemStack.asBukkitCopy(net.minecraft.server.v1_13_R2.ItemStack.a(this.itemNBT.getNBTValue()));
+	}
 }

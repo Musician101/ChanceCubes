@@ -1,144 +1,233 @@
 package chanceCubes.rewards.rewardparts;
 
-import chanceCubes.CCubesCore;
 import chanceCubes.blocks.BlockFallingCustom;
 import chanceCubes.config.CCubesSettings;
+import chanceCubes.rewards.variableTypes.BoolVar;
+import chanceCubes.rewards.variableTypes.IntVar;
 import chanceCubes.util.RewardsUtil;
-import net.minecraft.server.v1_10_R1.Block;
-import net.minecraft.server.v1_10_R1.BlockPosition;
-import net.minecraft.server.v1_10_R1.SoundCategory;
-import net.minecraft.server.v1_10_R1.WorldServer;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
+import chanceCubes.util.Scheduler;
+import chanceCubes.util.Task;
+import net.minecraft.server.v1_13_R2.WorldServer;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_10_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_10_R1.util.CraftMagicNumbers;
-import org.bukkit.material.MaterialData;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_13_R2.block.data.CraftBlockData;
 
-public class OffsetBlock {
+public class OffsetBlock extends BasePart
+{
+	protected BoolVar relativeToPlayer = new BoolVar(false);
+	public IntVar xOff;
+	public IntVar yOff;
+	public IntVar zOff;
 
-    public static String[] elements = new String[]{"XOffSet:I", "YOffSet:I", "ZOffSet:I", "Block:S", "Falling:B", "delay:I", "RelativeToPlayer:B"};
-    public int xOff;
-    public int yOff;
-    public int zOff;
-    protected Material material;
-    protected MaterialData materialData;
-    protected boolean causeUpdate = false;
-    protected int delay = 0;
-    protected boolean falling;
-    protected boolean relativeToPlayer = false;
+	protected BlockData state;
 
-    public OffsetBlock(int x, int y, int z, Material m, boolean falling) {
-        this(x, y, z, m, new MaterialData(m), falling);
-    }
+	protected BoolVar falling;
 
-    public OffsetBlock(int x, int y, int z, Material m, MaterialData materialData, boolean falling) {
-        this(x, y, z, m, materialData, falling, 0);
-    }
+	protected BoolVar causeUpdate = new BoolVar(false);
 
-    public OffsetBlock(int x, int y, int z, Material m, boolean falling, int delay) {
-        this(x, y, z, m, new MaterialData(m), falling, delay);
-    }
+	private BoolVar removeUnbreakableBlocks = new BoolVar(false);
 
-    public OffsetBlock(int x, int y, int z, Material m, MaterialData materialData, boolean falling, int delay) {
-        this.xOff = x;
-        this.yOff = y;
-        this.zOff = z;
-        this.material = m;
-        this.falling = falling;
-        this.delay = delay;
-        this.materialData = materialData;
-    }
+	protected BoolVar playSound = new BoolVar(true);
 
-    public Material getMaterial() {
-        return this.material;
-    }
+	public OffsetBlock(int x, int y, int z, Material b, boolean falling)
+	{
+		this(x, y, z, b.createBlockData(), falling);
+	}
 
-    public MaterialData getMaterialData() {
-        return materialData;
-    }
+	public OffsetBlock(int x, int y, int z, Material b, BoolVar falling)
+	{
+		this(x, y, z, b, falling, new IntVar(0));
+	}
 
-    public void setMaterialData(MaterialData materialData) {
-        this.materialData = materialData;
-    }
+	public OffsetBlock(int x, int y, int z, Material b, BoolVar falling, IntVar delay)
+	{
+		this(new IntVar(x), new IntVar(y), new IntVar(z), b.createBlockData(), falling, delay);
+	}
 
-    public int getDelay() {
-        return this.delay;
-    }
+	public OffsetBlock(int x, int y, int z, Material b, boolean falling, int delay)
+	{
+		this(x, y, z, b.createBlockData(), falling, delay);
+	}
 
-    public void setDelay(int delay) {
-        this.delay = delay;
-    }
+	public OffsetBlock(int x, int y, int z, BlockData state, boolean falling)
+	{
+		this(x, y, z, state, falling, 0);
+	}
 
-    public boolean isFalling() {
-        return this.falling;
-    }
+	public OffsetBlock(int x, int y, int z, BlockData state, boolean falling, int delay)
+	{
+		this(new IntVar(x), new IntVar(y), new IntVar(z), state, new BoolVar(falling), new IntVar(delay));
+	}
 
-    public void setFalling(boolean falling) {
-        this.falling = falling;
-    }
+	public OffsetBlock(IntVar x, IntVar y, IntVar z, Material b, BoolVar falling)
+	{
+		this(x, y, z, b.createBlockData(), falling, new IntVar(0));
+	}
 
-    public boolean isRelativeToPlayer() {
-        return this.relativeToPlayer;
-    }
+	public OffsetBlock(IntVar x, IntVar y, IntVar z, BlockData state, BoolVar falling, IntVar delay)
+	{
+		this.xOff = x;
+		this.yOff = y;
+		this.zOff = z;
+		this.falling = falling;
+		this.setDelay(delay);
+		this.state = state;
+	}
 
-    public OffsetBlock setRelativeToPlayer(boolean relative) {
-        this.relativeToPlayer = relative;
-        return this;
-    }
+	public void spawnInWorld(Location location)
+	{
+		if(!falling.getBoolValue())
+		{
 
-    public void placeInWorld(Location location, boolean offset) {
-        int xx = location.getBlockX();
-        int yy = location.getBlockY();
-        int zz = location.getBlockZ();
-        if (offset) {
-            xx += xOff;
-            yy += yOff;
-            zz += zOff;
-        }
+			Scheduler.scheduleTask(new Task("Delayed_Block", this.getDelay())
+			{
+				@Override
+				public void callback()
+				{
+					placeInWorld(location, true);
+				}
+			});
+		}
+		else
+		{
+			Scheduler.scheduleTask(new Task("Falling_Block", this.getDelay())
+			{
+				@Override
+				public void callback()
+				{
+					spawnFallingBlock(location);
+				}
+			});
+		}
+	}
 
-        RewardsUtil.placeBlock(material, materialData, location);
-        net.minecraft.server.v1_10_R1.World world = ((CraftWorld) location.getWorld()).getHandle();
-        Chunk chunk = location.getChunk();
-        Block bSurface = new net.minecraft.server.v1_10_R1.Chunk(world, chunk.getX(), chunk.getZ()).getBlockData(new BlockPosition(xx, yy - 1, zz)).getBlock();
-        world.a(null, (double) ((float) xx + 0.5F), (double) ((float) yy + 0.5F), (double) ((float) zz + 0.5F), bSurface.w().e(), SoundCategory.BLOCKS, (bSurface.w().a() + 1.0F) / 2.0F, bSurface.w().a() * 0.5F);
-    }
+	protected void spawnFallingBlock(Location location)
+	{
+		int xOffVal = xOff.getIntValue();
+		int yOffVal = yOff.getIntValue();
+		int zOffVal = zOff.getIntValue();
+		double yy = location.getY() + yOffVal + CCubesSettings.dropHeight + 0.5 >= 256 ? 255 : location.getY() + yOffVal + CCubesSettings.dropHeight + 0.5;
+		for(int yyy = (int) yy; yyy >= location.getY() + yOffVal; yyy--)
+			RewardsUtil.placeBlock(Material.AIR.createBlockData(), new Location(location.getWorld(), location.getX() + xOffVal, yyy, location.getZ() + zOffVal), removeUnbreakableBlocks.getBoolValue());
 
-    public OffsetBlock setCausesBlockUpdate(boolean flag) {
-        this.causeUpdate = flag;
-        return this;
-    }
+		WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
+		BlockFallingCustom entityFallingBlock = new BlockFallingCustom(world, location.getX() + xOffVal + 0.5, yy, location.getZ() + zOffVal + 0.5, ((CraftBlockData) this.state).getState(), location.getBlockY() + yOffVal, this);
+		world.g(entityFallingBlock);
+	}
 
-    protected void spawnFallingBlock(Location location) {
-        double yy = (((double) (location.getBlockY() + yOff + CCubesSettings.dropHeight)) + 0.5) >= 256 ? 255 : (((double) (location.getBlockY() + yOff + CCubesSettings.dropHeight)) + 0.5);
-        for (int yyy = (int) yy; yyy >= location.getBlockY() + yOff; yyy--) {
-            Location loc = new Location(location.getWorld(), location.getBlockX() + xOff, yyy, location.getBlockZ() + zOff);
-            BlockState state = loc.getBlock().getState();
-            state.setType(Material.AIR);
-            state.getLocation();
-            if (RewardsUtil.isBlockUnbreakable(state.getLocation()))
-                state.update(true);
-        }
+	public OffsetBlock setBlockData(BlockData state)
+	{
+		this.state = state;
+		return this;
+	}
 
-        WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
-        BlockFallingCustom entityfallingblock = new BlockFallingCustom(world, (location.getX() + xOff) + 0.5, yy, (location.getZ() + zOff) + 0.5, CraftMagicNumbers.getBlock(material).fromLegacyData(materialData.getData()), location.getBlockY() + yOff, this);
-        world.addEntity(entityfallingblock);
-    }
+	public BlockData getBlockData()
+	{
+		return this.state;
+	}
 
-    public void spawnInWorld(Location location) {
-        if (!falling) {
-            if (delay != 0)
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CCubesCore.instance(), () -> placeInWorld(location, true));
-            else
-                placeInWorld(location, true);
-        }
-        else {
-            if (delay != 0)
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CCubesCore.instance(), () -> spawnFallingBlock(location));
-            else
-                spawnFallingBlock(location);
-        }
-    }
+	public OffsetBlock setRelativeToPlayer(boolean relative)
+	{
+		return this.setRelativeToPlayer(new BoolVar(relative));
+	}
+
+	public OffsetBlock setRelativeToPlayer(BoolVar relative)
+	{
+		this.relativeToPlayer = relative;
+		return this;
+	}
+
+	public boolean isRelativeToPlayer()
+	{
+		return this.relativeToPlayer.getBoolValue();
+	}
+
+	public IntVar getDelayVar()
+	{
+		return this.delay;
+	}
+
+	public OffsetBlock setCausesBlockUpdate(boolean flag)
+	{
+		return this.setCausesBlockUpdate(new BoolVar(flag));
+	}
+
+	public OffsetBlock setCausesBlockUpdate(BoolVar flag)
+	{
+		this.causeUpdate = flag;
+		return this;
+	}
+
+	public boolean isFalling()
+	{
+		return this.falling.getBoolValue();
+	}
+
+	public BoolVar isFallingVar()
+	{
+		return this.falling;
+	}
+
+	public void setFalling(boolean falling)
+	{
+		this.setFalling(new BoolVar(falling));
+	}
+
+	public void setFalling(BoolVar falling)
+	{
+		this.falling = falling;
+	}
+
+	public void setRemoveUnbreakableBlocks(boolean remove)
+	{
+		this.setRemoveUnbreakableBlocks(new BoolVar(remove));
+	}
+
+	public void setRemoveUnbreakableBlocks(BoolVar remove)
+	{
+		removeUnbreakableBlocks = remove;
+	}
+
+	public boolean doesRemoveUnbreakableBlocks()
+	{
+		return this.removeUnbreakableBlocks.getBoolValue();
+	}
+
+	public void setPlaysSound(BoolVar playSound)
+	{
+		this.playSound = playSound;
+	}
+
+	public boolean doesPlaySound()
+	{
+		return this.playSound.getBoolValue();
+	}
+
+	public Location placeInWorld(Location location, boolean offset)
+	{
+		int xx = location.getBlockX();
+		int yy = location.getBlockY();
+		int zz = location.getBlockZ();
+		if(offset)
+		{
+			xx += xOff.getIntValue();
+			yy += yOff.getIntValue();
+			zz += zOff.getIntValue();
+		}
+
+		Location placePos = new Location(location.getWorld(), xx, yy, zz);
+		RewardsUtil.placeBlock(state, placePos, causeUpdate.getBoolValue(), this.removeUnbreakableBlocks.getBoolValue());
+		if(this.playSound.getBoolValue())
+		{
+			Location surfacePos = placePos.clone().add(0, -1, 0);
+			// Spigot doesn't have a way to get valid sounds from blocks w/o NMS so we'll default to BLOCK_METAL_PLACE
+			surfacePos.getWorld().playSound(new Location(surfacePos.getWorld(), xx + 0.5, yy + 0.5F, zz + 0.5F), Sound.BLOCK_METAL_PLACE, SoundCategory.BLOCKS, 1, 1);
+		}
+
+		return placePos;
+	}
 }

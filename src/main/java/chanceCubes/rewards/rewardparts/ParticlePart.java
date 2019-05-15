@@ -1,26 +1,45 @@
 package chanceCubes.rewards.rewardparts;
 
-import org.bukkit.Particle;
+import chanceCubes.rewards.variableTypes.IntVar;
+import chanceCubes.rewards.variableTypes.StringVar;
 
-public class ParticlePart {
+public class ParticlePart extends BasePart
+{
+	private IntVar particleID = new IntVar(-1);
+	private StringVar particleName = new StringVar("");
 
-    public static String[] elements = new String[]{"particle:I", "x:I", "y:I", "z:I", "delay:I"};
-    private int delay = 0;
-    private Particle particle;
+	public ParticlePart(int particle)
+	{
+		this(new IntVar(particle));
+	}
 
-    public ParticlePart(Particle particle) {
-        this.particle = particle;
-    }
+	public ParticlePart(IntVar particle)
+	{
+		this.particleID = particle;
+	}
 
-    public int getDelay() {
-        return delay;
-    }
+	public ParticlePart(String particle)
+	{
+		this(new StringVar(particle));
+	}
 
-    public void setDelay(int delay) {
-        this.delay = delay;
-    }
+	public ParticlePart(StringVar particle)
+	{
+		this.particleName = particle;
+	}
 
-    public Particle getParticle() {
-        return particle;
-    }
+	public boolean useID()
+	{
+		return this.particleID.getIntValue() != -1;
+	}
+
+	public int getParticleID()
+	{
+		return particleID.getIntValue();
+	}
+
+	public String getParticleName()
+	{
+		return particleName.getValue();
+	}
 }

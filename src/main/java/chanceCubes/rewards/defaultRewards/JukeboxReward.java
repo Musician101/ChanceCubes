@@ -2,33 +2,27 @@ package chanceCubes.rewards.defaultRewards;
 
 import chanceCubes.CCubesCore;
 import chanceCubes.util.RewardsUtil;
-import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Jukebox;
 import org.bukkit.entity.Player;
-import org.bukkit.material.MaterialData;
+import org.bukkit.inventory.ItemStack;
 
-public class JukeboxReward implements IChanceCubeReward {
+public class JukeboxReward extends BaseCustomReward
+{
+	private ItemStack[] discs = new ItemStack[] { new ItemStack(Material.MUSIC_DISC_11), new ItemStack(Material.MUSIC_DISC_13), new ItemStack(Material.MUSIC_DISC_BLOCKS), new ItemStack(Material.MUSIC_DISC_CAT), new ItemStack(Material.MUSIC_DISC_CHIRP), new ItemStack(Material.MUSIC_DISC_FAR), new ItemStack(Material.MUSIC_DISC_MALL), new ItemStack(Material.MUSIC_DISC_MELLOHI), new ItemStack(Material.MUSIC_DISC_STAL), new ItemStack(Material.MUSIC_DISC_STRAD), new ItemStack(Material.MUSIC_DISC_WAIT), new ItemStack(Material.MUSIC_DISC_WARD) };
 
-    private Material[] discs = new Material[]{Material.RECORD_3, Material.RECORD_4, Material.RECORD_5, Material.RECORD_6, Material.RECORD_7, Material.RECORD_8, Material.RECORD_9, Material.RECORD_10, Material.RECORD_11, Material.RECORD_12, Material.GOLD_RECORD, Material.GREEN_RECORD};
-    private Random random = new Random();
+	public JukeboxReward()
+	{
+		super(CCubesCore.MODID + ":Juke_Box", 5);
+	}
 
-    @Override
-    public int getChanceValue() {
-        return 5;
-    }
-
-    @Override
-    public String getName() {
-        return CCubesCore.instance().getName().toLowerCase() + ":Juke_Box";
-    }
-
-    @Override
-    public void trigger(Location location, Player player) {
-        RewardsUtil.placeBlock(Material.JUKEBOX, new MaterialData(Material.JUKEBOX), location);
-        Jukebox jukebox = (Jukebox) location.getBlock().getState();
-        jukebox.setPlaying(discs[random.nextInt(discs.length)]);
-        jukebox.update(true);
-    }
+	@Override
+	public void trigger(Location location, Player player)
+	{
+		RewardsUtil.placeBlock(Material.JUKEBOX.createBlockData(), location);
+		Jukebox jukebox = (Jukebox) location.getBlock().getState();
+		ItemStack disc = discs[RewardsUtil.rand.nextInt(discs.length)];
+		jukebox.setRecord(disc);
+	}
 }

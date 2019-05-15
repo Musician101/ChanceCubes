@@ -1,75 +1,118 @@
 package chanceCubes.rewards.rewardparts;
 
+import chanceCubes.rewards.variableTypes.BoolVar;
+import chanceCubes.rewards.variableTypes.FloatVar;
+import chanceCubes.rewards.variableTypes.IntVar;
 import org.bukkit.Sound;
 
-public class SoundPart {
+public class SoundPart extends BasePart
+{
+	private Sound sound;
 
-    public static String[] elements = new String[]{"delay:I", "serverWide:B", "range:I"};
-    private boolean atPlayersLocation = false;
-    private int delay = 0;
-    private int pitch = 1;
-    private int range = 16;
-    private boolean serverWide = false;
-    private Sound sound;
-    private int volume = 1;
+	private BoolVar serverWide = new BoolVar(false);
+	private IntVar range = new IntVar(16);
 
-    public SoundPart(Sound sound) {
-        this.sound = sound;
-    }
+	private FloatVar volume = new FloatVar(1);
+	private FloatVar pitch = new FloatVar(1);
 
-    public int getDelay() {
-        return delay;
-    }
+	private BoolVar atPlayersLocation = new BoolVar(false);
 
-    public SoundPart setDelay(int delay) {
-        this.delay = delay;
-        return this;
-    }
+	public SoundPart(Sound sound)
+	{
+		this(sound, 0);
+	}
 
-    public int getPitch() {
-        return pitch;
-    }
+	public SoundPart(Sound sound, int delay)
+	{
+		this(sound, new IntVar(delay));
+	}
 
-    public void setPitch(int pitch) {
-        this.pitch = pitch;
-    }
+	public SoundPart(Sound sound, IntVar delay)
+	{
+		this.sound = sound;
+		this.setDelay(delay);
+	}
 
-    public int getRange() {
-        return range;
-    }
+	public Sound getSound()
+	{
+		return sound;
+	}
 
-    public SoundPart setRange(int range) {
-        this.range = range;
-        return this;
-    }
+	public boolean isServerWide()
+	{
+		return serverWide.getBoolValue();
+	}
 
-    public Sound getSound() {
-        return sound;
-    }
+	public SoundPart setServerWide(boolean serverWide)
+	{
+		return this.setServerWide(new BoolVar(serverWide));
+	}
 
-    public int getVolume() {
-        return volume;
-    }
+	public SoundPart setServerWide(BoolVar serverWide)
+	{
+		this.serverWide = serverWide;
+		return this;
+	}
 
-    public void setVolume(int volume) {
-        this.volume = volume;
-    }
+	public int getRange()
+	{
+		return range.getIntValue();
+	}
 
-    public boolean isServerWide() {
-        return serverWide;
-    }
+	public SoundPart setRange(int range)
+	{
+		return this.setRange(new IntVar(range));
+	}
 
-    public SoundPart setServerWide(boolean serverWide) {
-        this.serverWide = serverWide;
-        return this;
-    }
+	public SoundPart setRange(IntVar range)
+	{
+		this.range = range;
+		return this;
+	}
 
-    public boolean playAtPlayersLocation() {
-        return atPlayersLocation;
-    }
+	public float getVolume()
+	{
+		return volume.getFloatValue();
+	}
 
-    public SoundPart setAtPlayersLocation(boolean atPlayersLocation) {
-        this.atPlayersLocation = atPlayersLocation;
-        return this;
-    }
+	public void setVolume(float volume)
+	{
+		this.setVolume(new FloatVar(volume));
+	}
+
+	public void setVolume(FloatVar volume)
+	{
+		this.volume = volume;
+	}
+
+	public float getPitch()
+	{
+		return pitch.getFloatValue();
+	}
+
+	public void setPitch(float pitch)
+	{
+		this.setPitch(new FloatVar(pitch));
+	}
+
+	public void setPitch(FloatVar pitch)
+	{
+		this.pitch = pitch;
+	}
+
+	public boolean playAtPlayersLocation()
+	{
+		return atPlayersLocation.getBoolValue();
+	}
+
+	public SoundPart setAtPlayersLocation(boolean atPlayersLocation)
+	{
+		return this.setAtPlayersLocation(new BoolVar(atPlayersLocation));
+	}
+
+	public SoundPart setAtPlayersLocation(BoolVar atPlayersLocation)
+	{
+		this.atPlayersLocation = atPlayersLocation;
+		return this;
+	}
 }

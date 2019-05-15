@@ -1,26 +1,41 @@
 package chanceCubes.rewards.rewardparts;
 
+import chanceCubes.rewards.variableTypes.IntVar;
+import chanceCubes.rewards.variableTypes.StringVar;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
-public class PotionPart {
+public class PotionPart extends BasePart
+{
+	private StringVar id;
+	private IntVar duration;
+	private IntVar amplifier;
 
-    public static String[] elements = new String[]{"potionid:I", "duration:I", "delay:I"};
-    private int delay = 0;
-    private PotionEffect effect;
+	public PotionPart(PotionEffectType pot, int duration, int amplifier)
+	{
+		this(new StringVar(pot.getId() + ""), new IntVar(duration), new IntVar(amplifier));
+	}
 
-    public PotionPart(PotionEffect effect) {
-        this.effect = effect;
-    }
+	public PotionPart(String id, int duration, int amplifier)
+	{
+		this(new StringVar(id), new IntVar(duration), new IntVar(amplifier));
+	}
 
-    public int getDelay() {
-        return delay;
-    }
+	public PotionPart(StringVar id, IntVar duration, IntVar amplifier)
+	{
+		this.id = id;
+		this.duration = duration;
+		this.amplifier = amplifier;
+	}
 
-    public void setDelay(int delay) {
-        this.delay = delay;
-    }
-
-    public PotionEffect getEffect() {
-        return effect;
-    }
+	public PotionEffect getEffect()
+	{
+		PotionEffectType pot;
+		String val = id.getValue();
+		if(IntVar.isInteger(val))
+			pot = PotionEffectType.getById(Integer.parseInt(val));
+		else
+			pot = PotionEffectType.getByName(val);
+		return new PotionEffect(pot, duration.getIntValue() * 20, amplifier.getIntValue());
+	}
 }

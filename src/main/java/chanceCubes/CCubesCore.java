@@ -1,78 +1,88 @@
 package chanceCubes;
 
-import chanceCubes.achievement.CCubesAchievements;
 import chanceCubes.blocks.CCubesBlocks;
 import chanceCubes.commands.CCubesServerCommands;
-import chanceCubes.config.CCubesSettings;
 import chanceCubes.config.ConfigLoader;
+import chanceCubes.config.CustomProfileLoader;
 import chanceCubes.config.CustomRewardsLoader;
-import chanceCubes.hookins.ModHookUtil;
 import chanceCubes.items.CCubesItems;
 import chanceCubes.listeners.BlockListener;
 import chanceCubes.listeners.PlayerConnectListener;
-import chanceCubes.listeners.WorldGen;
 import chanceCubes.registry.ChanceCubeRegistry;
 import chanceCubes.registry.GiantCubeRegistry;
-import chanceCubes.util.CCubesRecipes;
+import chanceCubes.rewards.profiles.ProfileManager;
+import chanceCubes.rewards.profiles.TriggerHooks;
+import chanceCubes.rewards.profiles.triggerHooks.VanillaTriggerHooks;
+import chanceCubes.util.CubeStorage;
+import chanceCubes.util.NonReplaceableBlockOverride;
+import chanceCubes.util.Scheduler;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class CCubesCore extends JavaPlugin {
+public class CCubesCore extends JavaPlugin
+{
+	public static final String MODID = "chancecubes";
+	public static final String VERSION = "@VERSION@";
 
-    public static final String gameVersion = "1.10.2";
+	public static final String gameVersion = "1.13.2";
 
-    @Override
-    public void onEnable() {
-        //Load
-        ConfigLoader.loadConfigSettings();
-        CCubesItems.loadItems();
-        CCubesAchievements.loadAchievements();
+	TriggerHooks triggerHooks;
+	private CubeStorage cubeStorage;
 
-        getServer().getPluginManager().registerEvents(new BlockListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerConnectListener(), this);
-        getServer().getPluginManager().registerEvents(new WorldGen(), this);
+	public CubeStorage getCubeStorage()
+	{
+		return cubeStorage;
+	}
 
-        if (CCubesSettings.chestLoot) {
-            // ChestGenHooks.getInfo(ChestGenHooks.DUNGEON_CHEST).addItem(new WeightedRandomChestContent(new ItemStack(CCubesBlocks.chanceCube), 1, 2, 5));
-            // ChestGenHooks.getInfo(ChestGenHooks.DUNGEON_CHEST).addItem(new WeightedRandomChestContent(new ItemStack(CCubesBlocks.chanceIcosahedron), 1, 2, 5));
-            // ChestGenHooks.getInfo(ChestGenHooks.MINESHAFT_CORRIDOR).addItem(new WeightedRandomChestContent(new ItemStack(CCubesBlocks.chanceCube), 1, 2, 5));
-            // ChestGenHooks.getInfo(ChestGenHooks.MINESHAFT_CORRIDOR).addItem(new WeightedRandomChestContent(new ItemStack(CCubesBlocks.chanceIcosahedron), 1, 2, 5));
-            // ChestGenHooks.getInfo(ChestGenHooks.STRONGHOLD_CORRIDOR).addItem(new WeightedRandomChestContent(new ItemStack(CCubesBlocks.chanceCube), 1, 2, 5));
-            // ChestGenHooks.getInfo(ChestGenHooks.STRONGHOLD_CORRIDOR).addItem(new WeightedRandomChestContent(new ItemStack(CCubesBlocks.chanceIcosahedron), 1, 2, 5));
-            // ChestGenHooks.getInfo(ChestGenHooks.VILLAGE_BLACKSMITH).addItem(new WeightedRandomChestContent(new ItemStack(CCubesBlocks.chanceCube), 1, 2, 5));
-            // ChestGenHooks.getInfo(ChestGenHooks.VILLAGE_BLACKSMITH).addItem(new WeightedRandomChestContent(new ItemStack(CCubesBlocks.chanceIcosahedron), 1, 2, 5));
-        }
+	@Override
+	public void onEnable()
+	{
+		ConfigLoader.loadConfig();
+		cubeStorage = new CubeStorage();
+		PluginManager pm = Bukkit.getPluginManager();
+		pm.registerEvents(new PlayerConnectListener(), CCubesCore.getInstance());
+		pm.registerEvents(new VanillaTriggerHooks(), CCubesCore.getInstance());
+		pm.registerEvents(new BlockListener(), CCubesCore.getInstance());
+		ChanceCubeRegistry.loadDefaultRewards();
+		GiantCubeRegistry.loadDefaultRewards();
+		CustomRewardsLoader.instance.loadCustomRewards();
+		CustomRewardsLoader.instance.fetchRemoteInfo();
+		ProfileManager.initProfiles();
+		CustomProfileLoader.instance.loadProfiles();
+		NonReplaceableBlockOverride.loadOverrides();
 
-        //TODO convert to server sided gui
-        //NetworkRegistry.INSTANCE.registerGuiHandler(this, new CCubesGuiHandler());
+		Bukkit.getPluginCommand("chancecubes").setExecutor(new CCubesServerCommands());
+		triggerHooks = new TriggerHooks();
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+			triggerHooks.run();
+			Scheduler.tickTasks();
+		}, 1L, 1L);
+		ShapedRecipe cubeScanner = new ShapedRecipe(new NamespacedKey(this, "cube_scanner"), CCubesItems.getScanner());
+		cubeScanner.setIngredient('G', Material.GLASS);
+		cubeScanner.setIngredient('I', Material.IRON_INGOT);
+		cubeScanner.setIngredient('D', Material.DIAMOND_BLOCK);
+		cubeScanner.shape("IGI", "GDG", "IGI");
+		Bukkit.addRecipe(cubeScanner);
+		ShapedRecipe chanceCube = new ShapedRecipe(new NamespacedKey(this, "chance_cube"), CCubesBlocks.getChanceCube(1));
+		chanceCube.setIngredient('L', Material.LAPIS_BLOCK);
+		chanceCube.setIngredient('B', Material.LAPIS_LAZULI);
+		chanceCube.shape("LLL", "LBL", "LLL");
+		Bukkit.addRecipe(chanceCube);
+		getLogger().info("Death and destruction prepared! (And Cookies. Cookies were also prepared.)");
+	}
 
-        //Init
-        CCubesRecipes.loadRecipes();
+	@Override
+	public void onDisable()
+	{
+		cubeStorage.save();
+	}
 
-        //Post Init
-        ChanceCubeRegistry.loadDefaultRewards();
-        GiantCubeRegistry.loadDefaultRewards();
-        CustomRewardsLoader.instance.loadCustomRewards();
-        CustomRewardsLoader.instance.loadHolidayRewards();
-        CustomRewardsLoader.instance.loadDisabledRewards();
-
-        //Server Load
-        CCubesBlocks.load();
-        ModHookUtil.loadCustomModRewards();
-        getCommand(getId()).setExecutor(new CCubesServerCommands());
-    }
-
-    @Override
-    public void onDisable()
-    {
-        CCubesAchievements.save();
-        CCubesBlocks.save();
-    }
-
-    public static CCubesCore instance() {
-        return getPlugin(CCubesCore.class);
-    }
-
-    public String getId() {
-        return getName().toLowerCase();
-    }
+	public static CCubesCore getInstance()
+	{
+		return JavaPlugin.getPlugin(CCubesCore.class);
+	}
 }

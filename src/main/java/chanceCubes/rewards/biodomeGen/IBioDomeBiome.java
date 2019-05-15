@@ -6,11 +6,11 @@ import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-public interface IBioDomeBiome {
+public interface IBioDomeBiome
+{
+	Material getFloorBlock();
 
-    Material getFloorBlock();
+	void getRandomGenBlock(float dist, Random rand, int x, int y, int z, List<OffsetBlock> blocks, int delay);
 
-    void getRandomGenBlock(float dist, Random rand, int x, int y, int z, List<OffsetBlock> blocks, int delay);
-
-    void spawnEntities(Location location);
+	void spawnEntities(Location center);
 }

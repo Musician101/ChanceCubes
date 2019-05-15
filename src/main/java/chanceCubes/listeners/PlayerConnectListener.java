@@ -8,17 +8,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class PlayerConnectListener implements Listener {
+public class PlayerConnectListener implements Listener
+{
+	@EventHandler
+	public void onPlayerLogin(PlayerLoginEvent event)
+	{
+		new Thread(() -> CustomUserReward.getCustomUserReward(event.getPlayer().getUniqueId())).start();
+	}
 
-    boolean hasChecked = false;
-
-    @EventHandler
-    public void onPlayerLogin(PlayerLoginEvent event) {
-        new CustomUserReward(event.getPlayer());
-    }
-
-    @EventHandler
-    public void onPlayerLogout(PlayerQuitEvent event) {
-        ChanceCubeRegistry.INSTANCE.unregisterReward(CCubesCore.instance().getDescription().getPrefix() + ":Custom_Reward_For_" + event.getPlayer().getName());
-    }
+	@EventHandler
+	public void onPlayerLogout(PlayerQuitEvent event)
+	{
+		ChanceCubeRegistry.INSTANCE.unregisterReward(CCubesCore.MODID + ":CR_" + event.getPlayer().getName());
+	}
 }

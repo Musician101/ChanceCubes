@@ -1,45 +1,71 @@
 package chanceCubes.rewards.rewardparts;
 
-public class MessagePart {
+import chanceCubes.rewards.variableTypes.BoolVar;
+import chanceCubes.rewards.variableTypes.IntVar;
+import chanceCubes.rewards.variableTypes.StringVar;
 
-    public static String[] elements = new String[]{"message:S", "delay:I", "serverWide:B", "range:I"};
-    private int delay = 0;
-    private String message;
-    private int range = 32;
-    private boolean serverWide = false;
+public class MessagePart extends BasePart
+{
+	private StringVar message;
 
-    public MessagePart(String message) {
-        this.message = message;
-    }
+	private BoolVar serverWide = new BoolVar(false);
+	private IntVar range = new IntVar(32);
 
-    public int getDelay() {
-        return delay;
-    }
+	public MessagePart(String message)
+	{
+		this(message, 0);
+	}
 
-    public MessagePart setDelay(int delay) {
-        this.delay = delay;
-        return this;
-    }
+	public MessagePart(String message, int delay)
+	{
+		this(new StringVar(message), new IntVar(delay));
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public MessagePart(StringVar message)
+	{
+		this(message, new IntVar(0));
+	}
 
-    public int getRange() {
-        return range;
-    }
+	public MessagePart(StringVar message, IntVar delay)
+	{
+		this.message = message;
+		this.setDelay(delay);
+	}
 
-    public MessagePart setRange(int range) {
-        this.range = range;
-        return this;
-    }
+	public String getMessage()
+	{
+		return message.getValue();
+	}
 
-    public boolean isServerWide() {
-        return serverWide;
-    }
+	public boolean isServerWide()
+	{
+		return serverWide.getBoolValue();
+	}
 
-    public MessagePart setServerWide(boolean serverWide) {
-        this.serverWide = serverWide;
-        return this;
-    }
+	public MessagePart setServerWide(boolean serverWide)
+	{
+		return this.setServerWide(new BoolVar(serverWide));
+	}
+
+	public MessagePart setServerWide(BoolVar serverWide)
+	{
+		this.serverWide = serverWide;
+		return this;
+	}
+
+	public int getRange()
+	{
+		return range.getIntValue();
+	}
+
+	public MessagePart setRange(int range)
+	{
+		return this.setRange(new IntVar(range));
+	}
+
+	public MessagePart setRange(IntVar range)
+	{
+		this.range = range;
+		return this;
+	}
 }

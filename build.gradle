@@ -1,7 +1,6 @@
-apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -17,8 +16,6 @@ version project.mod_version
 
 repositories {
     mavenCentral()
-    // Needed for NMS dependencies, courtesy of Spigot's BuildTools
-    mavenLocal()
     maven {
         name = 'spigotmc'
         url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
@@ -28,15 +25,17 @@ repositories {
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
     maven {
-        name = 'wesjd-repo'
-        url = 'https://nexus.wesjd.net/repository/thirdparty'
+        name = 'sk89q'
+        url = 'http://maven.sk89q.com/repo/'
     }
+    // Needed for NMS dependencies, courtesy of Spigot's BuildTools
+    mavenLocal()
 }
 
 dependencies {
-    compile 'org.spigotmc:spigot:1.12-R0.1-SNAPSHOT'
-    compile 'net.wesjd:anvilgui:1.1.1-SNAPSHOT'
-    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
+    compile 'org.spigotmc:spigot:1.13.2-R0.1-SNAPSHOT'
+    compile 'com.sk89q.worldedit:worldedit-bukkit:7.0.0-SNAPSHOT'
 }
 
 processResources {
@@ -47,4 +46,36 @@ processResources {
 
 configurations {
     deployerJars
+}
+
+
+jar {
+    manifest {
+        attributes(["Specification-Title": "chance_cubes",
+                    "Specification-Vendor": "turkey2349 & Musician101",
+                    "Specification-Version": "1.13.2-R0.1-SNAPSHOT", // We are version 1 of the modlauncher specification
+                    "Implementation-Title": project.name,
+                    "Implementation-Version": "${version}",
+                    "Implementation-Vendor" :"turkey2349",
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
+    }
+}
+
+compileJava {
+    def mainClass = 'ChanceCubesCore.java'
+    def fullMainClass = 'src/main/java/chanceCubes/' + mainClass
+    def tempDir = 'build/tmp/sourcesCache'
+    doFirst {
+        copy {
+            from fullMainClass
+            into tempDir
+        }
+        ant.replace(file: fullMainClass, token: '@VERSION', value: project.version)
+    }
+    doLast {
+        copy {
+            from tempDir + '/' + mainClass
+            into project.file(mainClass).parent
+        }
+    }
 }

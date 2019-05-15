@@ -2,55 +2,58 @@ package chanceCubes.rewards.defaultRewards;
 
 import chanceCubes.CCubesCore;
 import chanceCubes.util.RewardsUtil;
+import chanceCubes.util.Scheduler;
+import chanceCubes.util.Task;
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 
-public class WolvesToCreepersReward implements IChanceCubeReward {
+public class WolvesToCreepersReward extends BaseCustomReward
+{
+	public WolvesToCreepersReward()
+	{
+		super(CCubesCore.MODID + ":Wolves_To_Creepers", -20);
+	}
 
-    @Override
-    public int getChanceValue() {
-        return -20;
-    }
+	@Override
+	public void trigger(Location location, Player player)
+	{
+		final List<Wolf> wolves = new ArrayList<>();
+		for(int i = 0; i < 10; i++)
+		{
+			for(int yy = 0; yy < 4; yy++)
+				for(int xx = -1; xx < 2; xx++)
+					for(int zz = -1; zz < 2; zz++)
+						RewardsUtil.placeBlock(Material.AIR.createBlockData(), location.clone().add(xx, yy, zz));
 
-    @Override
-    public String getName() {
-        return CCubesCore.instance().getName().toLowerCase() + ":Wolves_To_Creepers";
-    }
+			wolves.add(location.getWorld().spawn(location, Wolf.class, wolf -> {
+				wolf.setTamed(true);
+				wolf.setOwner(player);
+				wolf.setCustomName("Kehaan");
+				wolf.setCustomNameVisible(true);
+			}));
+		}
 
-    @Override
-    public void trigger(final Location location, Player player) {
-        final List<Entity> wolves = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            for (int yy = 0; yy < 4; yy++)
-                for (int xx = -1; xx < 2; xx++)
-                    for (int zz = -1; zz < 2; zz++)
-                        RewardsUtil.placeBlock(Material.AIR, location.clone().add(xx, yy, zz));
+		RewardsUtil.sendMessageToNearPlayers(location, 32, "Do they look weird to you?");
 
-            Wolf wolf = (Wolf) location.getWorld().spawnEntity(location, EntityType.WOLF);
-            wolf.setTamed(true);
-            wolf.setOwner(player);
-            wolf.setCustomName("Kehaan");
-            wolf.setCustomNameVisible(true);
-            wolves.add(wolf);
-        }
-
-        RewardsUtil.sendMessageToNearPlayers(location, 32, "Do they look weird to you?");
-
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CCubesCore.instance(), () -> {
-            for (Entity wolf : wolves) {
-                wolf.remove();
-                Creeper creeper = (Creeper) location.getWorld().spawnEntity(wolf.getLocation(), EntityType.CREEPER);
-                creeper.setCustomName("Jacky");
-                creeper.setCustomNameVisible(true);
-            }
-        }, 200);
-    }
+		Scheduler.scheduleTask(new Task("Mob_Switch", 200)
+		{
+			@Override
+			public void callback()
+			{
+				for(Wolf wolf : wolves)
+				{
+					wolf.remove();
+					location.getWorld().spawn(wolf.getLocation(), Creeper.class, creeper -> {
+						creeper.setCustomName("Jacky");
+						creeper.setCustomNameVisible(true);
+					});
+				}
+			}
+		});
+	}
 }

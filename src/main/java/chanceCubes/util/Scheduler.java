@@ -5,10 +5,14 @@ import java.util.List;
 
 public class Scheduler {
 
-    private static List<Task> tasks = new ArrayList<Task>();
+    private static List<Task> tasks = new ArrayList<>();
 
     public static boolean scheduleTask(Task task) {
         return tasks.add(task);
+    }
+
+    public static boolean removeTask(Task task) {
+        return tasks.remove(task);
     }
 
     public static void tickTasks() {

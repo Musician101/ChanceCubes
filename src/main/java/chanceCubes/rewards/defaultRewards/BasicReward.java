@@ -1,35 +1,24 @@
 package chanceCubes.rewards.defaultRewards;
 
-import chanceCubes.rewards.type.IRewardType;
+import chanceCubes.rewards.rewardtype.IRewardType;
+import java.util.Arrays;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class BasicReward implements IChanceCubeReward {
+public class BasicReward extends BaseCustomReward
+{
+	private IRewardType[] rewards;
 
-    private int chance;
-    private String name;
-    private IRewardType[] rewards;
+	public BasicReward(String name, int chance, IRewardType... rewards)
+	{
+		super(name, chance);
+		this.rewards = rewards;
+	}
 
-    public BasicReward(String name, int chance, IRewardType... rewards) {
-        this.name = name;
-        this.chance = chance;
-        this.rewards = rewards;
-    }
-
-    @Override
-    public int getChanceValue() {
-        return this.chance;
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public void trigger(Location location, Player player) {
-        if (rewards != null)
-            for (IRewardType reward : rewards)
-                reward.trigger(location, player);
-    }
+	@Override
+	public void trigger(Location location, Player player)
+	{
+		if(rewards != null)
+			Arrays.stream(rewards).forEach(reward -> reward.trigger(location, player));
+	}
 }
