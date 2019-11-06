@@ -35,9 +35,9 @@ dependencies {
 }
 
 processResources {
-    from(sourceSets.main.resources.srcDirs) {
+    filesMatching("**/*.yml", {
         expand 'version': project.version
-    }
+    })
 }
 
 configurations {
@@ -58,20 +58,22 @@ jar {
 }
 
 compileJava {
-    def mainClass = 'ChanceCubesCore.java'
-    def fullMainClass = 'src/main/java/chanceCubes/' + mainClass
+    options.encoding = 'UTF-8'
+    def mainName = 'CCubesCore.java'
+    def main = 'src/main/java/chanceCubes/' + mainName
     def tempDir = 'build/tmp/sourcesCache'
     doFirst {
         copy {
-            from fullMainClass
+            from main
             into tempDir
         }
-        ant.replace(file: fullMainClass, token: '@VERSION', value: project.version)
+
+        ant.replace(file: main, token: '@VERSION@', value: project.version)
     }
     doLast {
         copy {
-            from tempDir + '/' + mainClass
-            into project.file(mainClass).parent
+            from tempDir + '/' + mainName
+            into project.file(main).parent
         }
     }
 }
