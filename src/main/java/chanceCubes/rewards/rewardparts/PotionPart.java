@@ -11,16 +11,6 @@ public class PotionPart extends BasePart
 	private IntVar duration;
 	private IntVar amplifier;
 
-	public PotionPart(PotionEffectType pot, int duration, int amplifier)
-	{
-		this(new StringVar(pot.getId() + ""), new IntVar(duration), new IntVar(amplifier));
-	}
-
-	public PotionPart(String id, int duration, int amplifier)
-	{
-		this(new StringVar(id), new IntVar(duration), new IntVar(amplifier));
-	}
-
 	public PotionPart(StringVar id, IntVar duration, IntVar amplifier)
 	{
 		this.id = id;

@@ -93,9 +93,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
-import net.minecraft.server.v1_13_R2.ChatComponentText;
-import net.minecraft.server.v1_13_R2.NBTTagCompound;
-import net.minecraft.server.v1_13_R2.TileEntitySign;
+import net.minecraft.server.v1_14_R1.ChatComponentText;
+import net.minecraft.server.v1_14_R1.NBTTagCompound;
+import net.minecraft.server.v1_14_R1.TileEntitySign;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -104,7 +104,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Sign;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
-import org.bukkit.entity.LingeringPotion;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -302,7 +302,7 @@ public class ChanceCubeRegistry implements IRewardRegistry
 		sign.lines[1] = new ChatComponentText("to succeed");
 		nbt = new NBTTagCompound();
 		sign.save(nbt);
-		INSTANCE.registerReward(new BasicReward(CCubesCore.MODID + ":Path_To_Succeed", 0, new BlockRewardType(new OffsetTileEntity(0, 0, -5, Material.SIGN, nbt, true, 20), new OffsetBlock(0, -1, 0, Material.COBBLESTONE, true, 0), new OffsetBlock(0, -1, -1, Material.COBBLESTONE, true, 4), new OffsetBlock(0, -1, -2, Material.COBBLESTONE, true, 8), new OffsetBlock(0, -1, -3, Material.COBBLESTONE, true, 12), new OffsetBlock(0, -1, -4, Material.COBBLESTONE, true, 16), new OffsetBlock(0, -1, -5, Material.COBBLESTONE, true, 20))));
+		INSTANCE.registerReward(new BasicReward(CCubesCore.MODID + ":Path_To_Succeed", 0, new BlockRewardType(new OffsetTileEntity(0, 0, -5, Material.OAK_SIGN, nbt, true, 20), new OffsetBlock(0, -1, 0, Material.COBBLESTONE, true, 0), new OffsetBlock(0, -1, -1, Material.COBBLESTONE, true, 4), new OffsetBlock(0, -1, -2, Material.COBBLESTONE, true, 8), new OffsetBlock(0, -1, -3, Material.COBBLESTONE, true, 12), new OffsetBlock(0, -1, -4, Material.COBBLESTONE, true, 16), new OffsetBlock(0, -1, -5, Material.COBBLESTONE, true, 20))));
 
 		OffsetTileEntity[] signs = new OffsetTileEntity[4];
 		OffsetTileEntity temp;
@@ -313,8 +313,8 @@ public class ChanceCubeRegistry implements IRewardRegistry
 			sign.lines[0] = new ChatComponentText("Help Me!");
 			nbt = new NBTTagCompound();
 			sign.save(nbt);
-			temp = new OffsetTileEntity(i == 2 ? -2 : i == 3 ? 2 : 0, 1, i == 0 ? -2 : i == 1 ? 2 : 0, Material.WALL_SIGN, nbt, false, 5);
-			Sign data = (Sign) Material.WALL_SIGN.createBlockData();
+			temp = new OffsetTileEntity(i == 2 ? -2 : i == 3 ? 2 : 0, 1, i == 0 ? -2 : i == 1 ? 2 : 0, Material.OAK_WALL_SIGN, nbt, false, 5);
+			Sign data = (Sign) Material.OAK_WALL_SIGN.createBlockData();
 			data.setRotation(faces[i]);
 			temp.setBlockData(data);
 			signs[i] = temp;
@@ -427,12 +427,12 @@ public class ChanceCubeRegistry implements IRewardRegistry
 			{
 				for(double rad = -Math.PI; rad <= Math.PI; rad += (Math.PI / 10))
 				{
-					LingeringPotion pot = location.getWorld().spawn(location.clone().add(0.5, 0, 0.5), LingeringPotion.class, lingeringPotion -> {
+					ThrownPotion pot = location.getWorld().spawn(location.clone().add(0.5, 0, 0.5), ThrownPotion.class, thrownPotion -> {
 						ItemStack potion = new ItemStack(Material.LINGERING_POTION);
 						PotionMeta meta = (PotionMeta) potion.getItemMeta();
 						meta.setBasePotionData(new PotionData(RewardsUtil.getRandomPotionType()));
 						potion.setItemMeta(meta);
-						lingeringPotion.setItem(potion);
+						thrownPotion.setItem(potion);
 					});
 
 					pot.setVelocity(new Vector(Math.cos(rad) * (0.1 + (0.05 * 3)), 1, Math.sin(rad) * (0.1 + (0.05 * 3))));

@@ -2,14 +2,14 @@ package chanceCubes.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraft.server.v1_13_R2.BlockPosition;
-import net.minecraft.server.v1_13_R2.IInventory;
-import net.minecraft.server.v1_13_R2.NBTTagCompound;
-import net.minecraft.server.v1_13_R2.TileEntity;
+import net.minecraft.server.v1_14_R1.BlockPosition;
+import net.minecraft.server.v1_14_R1.IInventory;
+import net.minecraft.server.v1_14_R1.NBTTagCompound;
+import net.minecraft.server.v1_14_R1.TileEntity;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_14_R1.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -42,7 +42,7 @@ public class RewardBlockCache
 		TileEntity te = ((CraftWorld) origin.getWorld()).getHandle().getTileEntity(new BlockPosition(adjPos.getBlockX(), adjPos.getBlockY(), adjPos.getBlockZ()));
 		if(te != null)
 		{
-			oldNBT = te.aa_();
+			oldNBT = te.b();
 			if(te instanceof IInventory)
 				((IInventory) te).clear();
 

@@ -7,14 +7,14 @@ import chanceCubes.rewards.variableTypes.IntVar;
 import chanceCubes.util.RewardsUtil;
 import chanceCubes.util.Scheduler;
 import chanceCubes.util.Task;
-import net.minecraft.server.v1_13_R2.WorldServer;
+import net.minecraft.server.v1_14_R1.WorldServer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_13_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_14_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_14_R1.block.data.CraftBlockData;
 
 public class OffsetBlock extends BasePart
 {
@@ -116,7 +116,7 @@ public class OffsetBlock extends BasePart
 
 		WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
 		BlockFallingCustom entityFallingBlock = new BlockFallingCustom(world, location.getX() + xOffVal + 0.5, yy, location.getZ() + zOffVal + 0.5, ((CraftBlockData) this.state).getState(), location.getBlockY() + yOffVal, this);
-		world.g(entityFallingBlock);
+		world.addEntity(entityFallingBlock);
 	}
 
 	public OffsetBlock setBlockData(BlockData state)

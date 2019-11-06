@@ -8,7 +8,7 @@ import chanceCubes.util.Task;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.SplashPotion;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
@@ -17,7 +17,7 @@ import org.bukkit.util.Vector;
 
 public class PotionsReward extends BaseCustomReward
 {
-	private SplashPotion pot;
+	private ThrownPotion pot;
 
 	public PotionsReward()
 	{
@@ -47,12 +47,12 @@ public class PotionsReward extends BaseCustomReward
 				for(double rad = -Math.PI; rad <= Math.PI; rad += (Math.PI / 20))
 				{
 					PotionType potionType = RewardsUtil.getRandomPotionType();
-					pot = location.getWorld().spawn(location, SplashPotion.class, splashPotion -> {
+					pot = location.getWorld().spawn(location, ThrownPotion.class, thrownPotion -> {
 						ItemStack itemStack = new ItemStack(Material.SPLASH_POTION);
 						PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
 						meta.setBasePotionData(new PotionData(potionType));
 						itemStack.setItemMeta(meta);
-						splashPotion.setItem(itemStack);
+						thrownPotion.setItem(itemStack);
 					});
 					pot.setVelocity(new Vector(Math.cos(rad), 1, Math.sin(rad)));
 				}
@@ -76,12 +76,12 @@ public class PotionsReward extends BaseCustomReward
 				for(double yy = -0.2; yy <= 1; yy += 0.1)
 				{
 					PotionType potionType = RewardsUtil.getRandomPotionType();
-					pot = location.getWorld().spawn(location, SplashPotion.class, splashPotion -> {
+					pot = location.getWorld().spawn(location, ThrownPotion.class, thrownPotion -> {
 						ItemStack itemStack = new ItemStack(Material.SPLASH_POTION);
 						PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
 						meta.setBasePotionData(new PotionData(potionType));
 						itemStack.setItemMeta(meta);
-						splashPotion.setItem(itemStack);
+						thrownPotion.setItem(itemStack);
 					});
 					pot.setVelocity(new Vector(Math.cos(delayLeft / 2) * 0.2 * yy, 1, Math.sin(delayLeft / 2) * 0.2 * yy));
 				}

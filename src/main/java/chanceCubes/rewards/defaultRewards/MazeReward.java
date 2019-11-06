@@ -48,7 +48,7 @@ public class MazeReward extends BaseCustomReward
 				if(this.delayLeft % 20 == 0)
 					this.showTimeLeft(player);
 
-				if(gen.endBlockWorldCords.getBlock().getType() != Material.SIGN)
+				if(gen.endBlockWorldCords.getBlock().getType() != Material.OAK_SIGN)
 				{
 					gen.endMaze(player);
 					player.sendMessage("Hey! You won!");

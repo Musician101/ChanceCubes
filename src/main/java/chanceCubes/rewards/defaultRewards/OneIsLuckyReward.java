@@ -28,7 +28,7 @@ public class OneIsLuckyReward extends BaseCustomReward
 
 		if(RewardsUtil.placeBlock(Material.LAPIS_BLOCK.createBlockData(), location.clone().add(-1, 0, 0)))
 			location.clone().add(-1, 0, 0).getBlock().setMetadata("ChanceCubes", leftCube);
-		if(RewardsUtil.placeBlock(Material.SIGN.createBlockData(), location))
+		if(RewardsUtil.placeBlock(Material.OAK_SIGN.createBlockData(), location))
 		{
 			Sign sign = (Sign) location.getBlock().getState();
 			sign.setLine(0, "One is lucky");

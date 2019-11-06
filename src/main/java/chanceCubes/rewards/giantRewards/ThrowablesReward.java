@@ -12,7 +12,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
-import org.bukkit.entity.TippedArrow;
+import org.bukkit.entity.Arrow;
 import org.bukkit.util.Vector;
 
 public class ThrowablesReward extends BaseCustomReward
@@ -35,7 +35,7 @@ public class ThrowablesReward extends BaseCustomReward
 				Entity throwEnt;
 				if(entChoice == 0)
 				{
-					throwEnt = world.spawn(location, TippedArrow.class);
+					throwEnt = world.spawn(location, Arrow.class);
 				}
 				else if(entChoice == 1)
 				{

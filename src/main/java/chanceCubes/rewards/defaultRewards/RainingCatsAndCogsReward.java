@@ -5,9 +5,9 @@ import chanceCubes.util.RewardsUtil;
 import chanceCubes.util.Scheduler;
 import chanceCubes.util.Task;
 import org.bukkit.Location;
+import org.bukkit.entity.Cat;
+import org.bukkit.entity.Cat.Type;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Ocelot;
-import org.bukkit.entity.Ocelot.Type;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wolf;
@@ -46,8 +46,8 @@ public class RainingCatsAndCogsReward extends BaseCustomReward
 				}
 				else
 				{
-					ent = location.getWorld().spawn(new Location(player.getWorld(), player.getLocation().getX() + xInc, 256, player.getLocation().getZ() + zInc), Wolf.class);
-					((Ocelot) ent).setCatType(Type.BLACK_CAT);
+					ent = location.getWorld().spawn(new Location(player.getWorld(), player.getLocation().getX() + xInc, 256, player.getLocation().getZ() + zInc), Cat.class);
+					((Cat) ent).setCatType(Type.BLACK);
 				}
 
 				ent.setTamed(true);

@@ -21,7 +21,7 @@ public class ItemChestReward extends BaseCustomReward
 			new ItemStack(Material.EGG), new ItemStack(Material.FEATHER), new ItemStack(Material.GOLD_INGOT), new ItemStack(Material.IRON_SWORD),
 			new ItemStack(Material.LEATHER), new ItemStack(Material.EMERALD), new ItemStack(Material.MELON_SLICE), new ItemStack(Material.OAK_DOOR),
 			new ItemStack(Material.PAPER), new ItemStack(Material.POTATO), new ItemStack(Material.PUMPKIN_PIE), new ItemStack(Material.QUARTZ),
-			new ItemStack(Material.MUSIC_DISC_13), new ItemStack(Material.REDSTONE), new ItemStack(Material.SUGAR_CANE), new ItemStack(Material.SIGN),
+			new ItemStack(Material.MUSIC_DISC_13), new ItemStack(Material.REDSTONE), new ItemStack(Material.SUGAR_CANE), new ItemStack(Material.OAK_SIGN),
 			new ItemStack(Material.SLIME_BALL), new ItemStack(Material.SNOWBALL), new ItemStack(Material.SPIDER_EYE), new ItemStack(Material.WHEAT),
 			new ItemStack(Material.EXPERIENCE_BOTTLE), new ItemStack(Material.CLAY_BALL), new ItemStack(Material.BLAZE_ROD),
 			new ItemStack(Material.ENDER_PEARL)};

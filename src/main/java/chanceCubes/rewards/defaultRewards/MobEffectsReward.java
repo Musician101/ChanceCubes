@@ -11,12 +11,11 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LingeringPotion;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.SplashPotion;
-import org.bukkit.entity.TippedArrow;
+import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -89,13 +88,13 @@ public class MobEffectsReward extends BaseCustomReward
 						delay = 6;
 						for(double rad = -Math.PI; rad <= Math.PI; rad += (Math.PI / 5))
 						{
-							SplashPotion splashPotion = location.getWorld().spawn(location, SplashPotion.class);
-							splashPotion.setVelocity(new Vector(Math.cos(rad) * 0.2, 1, Math.sin(rad) * 0.2));
+							ThrownPotion thrownPotion = location.getWorld().spawn(location, ThrownPotion.class);
+							thrownPotion.setVelocity(new Vector(Math.cos(rad) * 0.2, 1, Math.sin(rad) * 0.2));
 							ItemStack itemStack = new ItemStack(Material.SPLASH_POTION);
 							PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
 							meta.setBasePotionData(new PotionData(RewardsUtil.getRandomPotionType()));
 							itemStack.setItemMeta(meta);
-							splashPotion.setItem(itemStack);
+							thrownPotion.setItem(itemStack);
 						}
 						break;
 					case 2:
@@ -133,7 +132,7 @@ public class MobEffectsReward extends BaseCustomReward
 						if (!player.isOnGround())
 							y += player.getVelocity().getY();
 
-						TippedArrow arrow = location.getWorld().spawnArrow(player.getLocation(), new Vector(x, y, z), 1.6F, 12, TippedArrow.class);
+						Arrow arrow = location.getWorld().spawnArrow(player.getLocation(), new Vector(x, y, z), 1.6F, 12, Arrow.class);
 						arrow.setShooter(player);
 						player.playSound(location, Sound.ENTITY_SNOW_GOLEM_SHOOT, 1.0F, 1.0F / (RewardsUtil.rand.nextFloat() * 0.4F + 0.8F));
 						break;
@@ -143,7 +142,7 @@ public class MobEffectsReward extends BaseCustomReward
 							return;
 
 						delay = 10;
-						location.getWorld().spawn(location, LingeringPotion.class, potion -> {
+						location.getWorld().spawn(location, ThrownPotion.class, potion -> {
 							ItemStack itemStack = new ItemStack(Material.LINGERING_POTION);
 							PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
 							meta.setBasePotionData(new PotionData(RewardsUtil.getRandomPotionType()));

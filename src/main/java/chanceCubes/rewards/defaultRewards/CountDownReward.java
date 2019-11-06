@@ -9,7 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.SplashPotion;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
@@ -69,12 +69,12 @@ public class CountDownReward extends BaseCustomReward
 				}
 				else if(thing == 8)
 				{
-					location.getWorld().spawn(location, SplashPotion.class, splashPotion -> {
+					location.getWorld().spawn(location, ThrownPotion.class, thrownPotion -> {
 						ItemStack potion = new ItemStack(Material.SPLASH_POTION);
 						PotionMeta meta = (PotionMeta) potion.getItemMeta();
 						meta.setBasePotionData(new PotionData(RewardsUtil.getRandomPotionType()));
-						splashPotion.setItem(potion);
-						splashPotion.setVelocity(new Vector(0, -1, 0));
+						thrownPotion.setItem(potion);
+						thrownPotion.setVelocity(new Vector(0, -1, 0));
 					});
 				}
 				else if(thing == 9)

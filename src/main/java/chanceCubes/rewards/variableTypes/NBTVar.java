@@ -2,8 +2,8 @@ package chanceCubes.rewards.variableTypes;
 
 import chanceCubes.rewards.variableParts.StringPart;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.server.v1_13_R2.MojangsonParser;
-import net.minecraft.server.v1_13_R2.NBTTagCompound;
+import net.minecraft.server.v1_14_R1.MojangsonParser;
+import net.minecraft.server.v1_14_R1.NBTTagCompound;
 
 public class NBTVar extends CustomVar
 {

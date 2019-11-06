@@ -6,7 +6,7 @@ import chanceCubes.util.Task;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.SplashPotion;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.util.Vector;
@@ -31,7 +31,7 @@ public class PotionRewardType extends BaseRewardType<PotionPart>
 				meta.addCustomEffect(part.getEffect(), true);
 				potion.setItemMeta(meta);
 
-				location.getWorld().spawn(player.getLocation().add(0, 2, 0), SplashPotion.class, splashPotion -> splashPotion.setVelocity(new Vector(0, 0.1, 0)));
+				location.getWorld().spawn(player.getLocation().add(0, 2, 0), ThrownPotion.class, thrownPotion -> thrownPotion.setVelocity(new Vector(0, 0.1, 0)));
 			}
 		});
 	}

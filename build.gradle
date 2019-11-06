@@ -24,14 +24,14 @@ repositories {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
-   
+
     // Needed for NMS dependencies, courtesy of Spigot's BuildTools
     mavenLocal()
 }
 
 dependencies {
-    compile 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
-    compile 'org.spigotmc:spigot:1.13.2-R0.1-SNAPSHOT'
+    compile 'org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT'
+    compile 'org.spigotmc:spigot:1.14.4-R0.1-SNAPSHOT'
 }
 
 processResources {

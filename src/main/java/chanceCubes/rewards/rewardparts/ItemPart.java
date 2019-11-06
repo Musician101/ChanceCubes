@@ -2,8 +2,8 @@ package chanceCubes.rewards.rewardparts;
 
 import chanceCubes.rewards.variableTypes.IntVar;
 import chanceCubes.rewards.variableTypes.NBTVar;
-import net.minecraft.server.v1_13_R2.NBTTagCompound;
-import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack;
+import net.minecraft.server.v1_14_R1.NBTTagCompound;
+import org.bukkit.craftbukkit.v1_14_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemPart extends BasePart
@@ -44,6 +44,6 @@ public class ItemPart extends BasePart
 
 	public ItemStack getItemStack()
 	{
-		return CraftItemStack.asBukkitCopy(net.minecraft.server.v1_13_R2.ItemStack.a(this.itemNBT.getNBTValue()));
+		return CraftItemStack.asBukkitCopy(net.minecraft.server.v1_14_R1.ItemStack.a(this.itemNBT.getNBTValue()));
 	}
 }

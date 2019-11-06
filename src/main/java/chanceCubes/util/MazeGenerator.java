@@ -163,7 +163,7 @@ public class MazeGenerator
 		}
 
 		endBlockWorldCords = startPos.clone().add(xoff + this.endBlock.getX(), 0, zoff + this.endBlock.getY());
-		Sign sign = (Sign) Material.SIGN.createBlockData();
+		Sign sign = (Sign) Material.OAK_SIGN.createBlockData();
 		sign.setRotation(BlockFace.NORTH_NORTH_WEST);
 		cache.cacheBlock(new Vector(xoff + this.endBlock.getX(), 0, zoff + this.endBlock.getY()), sign);
 		org.bukkit.block.Sign signBlock = (org.bukkit.block.Sign) startPos.clone().add(xoff + endBlock.getX(), 0, zoff + endBlock.getY()).getBlock().getState();
