@@ -2,17 +2,19 @@ package chanceCubes.listeners;
 
 import chanceCubes.CCubesCore;
 import chanceCubes.blocks.CCubesBlocks;
+import chanceCubes.blocks.ChanceCubeData;
 import chanceCubes.metadata.ChanceCubeMetadataValue;
 import chanceCubes.metadata.D20MetadataValue;
 import chanceCubes.metadata.GiantCubeMetadataValue;
+import chanceCubes.persistance.ChanceCubeDataType;
 import chanceCubes.registry.ChanceCubeRegistry;
 import chanceCubes.registry.GiantCubeRegistry;
-import chanceCubes.util.CubeStorage.Type;
 import chanceCubes.util.GiantCubeUtil;
 import java.util.stream.Stream;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.TileState;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,6 +23,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.persistence.PersistentDataContainer;
 
 public class BlockListener implements Listener
 {
@@ -97,19 +100,27 @@ public class BlockListener implements Listener
 	public void onBlockPlace(BlockPlaceEvent event)
 	{
 		Block block = event.getBlockPlaced();
-		if(CCubesBlocks.isChanceCube(event.getItemInHand()))
+		ItemStack itemStack = event.getItemInHand();
+		ChanceCubeData itemData = itemStack.getItemMeta().getPersistentDataContainer().get(CCubesBlocks.DATA, new ChanceCubeDataType());
+		if(CCubesBlocks.isChanceCube(itemStack))
 		{
-			block.setMetadata("ChanceCubes", new ChanceCubeMetadataValue(event.getItemInHand().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL)));
-			CCubesCore.getInstance().getCubeStorage().add(block, Type.NORMAL);
+			TileState state = (TileState) block.getState();
+			PersistentDataContainer data = state.getPersistentDataContainer();
+			data.set(CCubesBlocks.DATA, new ChanceCubeDataType(), itemData);
+			state.update(true);
 		}
 		else if(CCubesBlocks.isGiantCube(event.getItemInHand()))
 		{
-			block.setMetadata("ChanceCubes", new GiantCubeMetadataValue());
-			CCubesCore.getInstance().getCubeStorage().add(block, Type.GIANT);
+			TileState state = (TileState) block.getState();
+			PersistentDataContainer data = state.getPersistentDataContainer();
+			data.set(CCubesBlocks.DATA, new ChanceCubeDataType(), itemData);
+			state.update(true);
 		}
 		else if (CCubesBlocks.isD20(event.getItemInHand())) {
-			block.setMetadata("ChanceCubes", new D20MetadataValue());
-			CCubesCore.getInstance().getCubeStorage().add(block, Type.D20);
+			TileState state = (TileState) block.getState();
+			PersistentDataContainer data = state.getPersistentDataContainer();
+			data.set(CCubesBlocks.DATA, new ChanceCubeDataType(), itemData);
+			state.update(true);
 		}
 	}
 }

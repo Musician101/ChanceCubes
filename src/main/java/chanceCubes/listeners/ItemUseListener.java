@@ -40,6 +40,7 @@ public class ItemUseListener implements Listener
 							inventory.setItemInOffHand(null);
 					}
 				});
+				event.setCancelled(true);
 			}
 			else if (CCubesBlocks.isGiantCube(block)) {
 				block.getMetadata("ChanceCubes").stream().map(GiantCubeMetadataValue.class::cast).findFirst().ifPresent(giantCube -> {
@@ -53,6 +54,7 @@ public class ItemUseListener implements Listener
 							inventory.setItemInOffHand(null);
 					}
 				});
+				event.setCancelled(true);
 			}
 			else if (CCubesBlocks.isD20(block)) {
 				block.getMetadata("ChanceCubes").stream().map(D20MetadataValue.class::cast).findFirst().ifPresent(d20 -> {
@@ -67,6 +69,7 @@ public class ItemUseListener implements Listener
 							inventory.setItemInOffHand(null);
 					}
 				});
+				event.setCancelled(true);
 			}
 		}
 	}

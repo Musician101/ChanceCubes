@@ -28,7 +28,7 @@ public class CCubesCore extends JavaPlugin
 	public static final String MODID = "chancecubes";
 	public static final String VERSION = "@VERSION@";
 
-	public static final String gameVersion = "1.13.2";
+	public static final String gameVersion = "1.15.2";
 
 	TriggerHooks triggerHooks;
 	private CubeStorage cubeStorage;

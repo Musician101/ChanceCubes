@@ -1,46 +1,91 @@
 package chanceCubes.blocks;
 
 import chanceCubes.CCubesCore;
-import chanceCubes.metadata.ChanceCubeMetadataValue;
-import chanceCubes.metadata.D20MetadataValue;
-import chanceCubes.metadata.GiantCubeMetadataValue;
+import chanceCubes.blocks.ChanceCubeData.ChanceCubeType;
+import chanceCubes.persistance.ChanceCubeDataType;
 import java.util.Random;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.TileState;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 
 public class CCubesBlocks
 {
+	public static final NamespacedKey DATA = new NamespacedKey(CCubesCore.getInstance(), "data");
+
+	public static boolean checkItem(@Nullable ItemStack itemStack, @Nonnull ChanceCubeType type) {
+		if (itemStack == null) {
+			return false;
+		}
+
+		if (itemStack.getType() != Material.BEACON) {
+			return false;
+		}
+
+		ItemMeta meta = itemStack.getItemMeta();
+		if (meta == null) {
+			return false;
+		}
+
+		return checkContainer(meta.getPersistentDataContainer(), type);
+	}
+
+	public static boolean checkBlock(@Nullable Block block, @Nonnull ChanceCubeType type) {
+		if (block == null) {
+			return false;
+		}
+
+		if (block.getType() != Material.BEACON) {
+			return false;
+		}
+
+		BlockState state = block.getState();
+		if (state instanceof TileState) {
+			return false;
+		}
+
+		TileState tile = (TileState) state;
+		return checkContainer(tile.getPersistentDataContainer(), type);
+	}
+
+	private static boolean checkContainer(@Nonnull PersistentDataContainer container, @Nonnull ChanceCubeType type) {
+		ChanceCubeData data = container.get(DATA, new ChanceCubeDataType());
+		if (data == null) {
+			return false;
+		}
+
+		return data.getType() == type;
+	}
 
 	public static boolean isChanceCube(ItemStack itemStack) {
-		ItemMeta meta;
-		return itemStack != null && itemStack.getType() == Material.LAPIS_BLOCK && (meta = itemStack.getItemMeta()).hasEnchant(Enchantment.PROTECTION_ENVIRONMENTAL) && meta.getDisplayName().equals(ChatColor.AQUA + "Chance Cubes");
+		return checkItem(itemStack, ChanceCubeType.CHANCE_CUBE);
 	}
 
 	public static boolean isGiantCube(ItemStack itemStack) {
-		ItemMeta meta;
-		return itemStack != null && itemStack.getType() == Material.LAPIS_BLOCK && (meta = itemStack.getItemMeta()).hasEnchant(Enchantment.PROTECTION_ENVIRONMENTAL) && meta.getDisplayName().equals(ChatColor.AQUA + "Compact Giant Cubes");
+		return checkItem(itemStack, ChanceCubeType.COMPACT_GIANT_CHANCE_CUBE);
 	}
 
 	public static boolean isD20(ItemStack itemStack) {
-		ItemMeta meta;
-		return itemStack != null && itemStack.getType() == Material.LAPIS_BLOCK && (meta = itemStack.getItemMeta()).hasEnchant(Enchantment.PROTECTION_ENVIRONMENTAL) && meta.getDisplayName().equals(ChatColor.AQUA + "Icosahedron");
+		return checkItem(itemStack, ChanceCubeType.D20);
 	}
 
 	public static boolean isChanceCube(Block block) {
-		return block != null && block.getType() == Material.LAPIS_BLOCK && block.getMetadata("ChanceCubes").stream().anyMatch(metadata -> metadata.getOwningPlugin() instanceof CCubesCore && metadata instanceof ChanceCubeMetadataValue);
+		return checkBlock(block, ChanceCubeType.CHANCE_CUBE);
 	}
 
 	public static boolean isGiantCube(Block block) {
-		return block != null && block.getType() == Material.LAPIS_BLOCK && block.getMetadata("ChanceCubes").stream().anyMatch(metadata -> metadata.getOwningPlugin() instanceof CCubesCore && metadata instanceof GiantCubeMetadataValue);
+		return checkBlock(block, ChanceCubeType.GIANT_CHANCE_CUBE);
 	}
 
 	public static boolean isD20(Block block) {
-		return block != null && block.getType() == Material.LAPIS_BLOCK && block.getMetadata("ChanceCubes").stream().anyMatch(metadata -> metadata.getOwningPlugin() instanceof CCubesCore && metadata instanceof D20MetadataValue);
+		return checkBlock(block, ChanceCubeType.D20);
 	}
 
 	public static ItemStack getChanceCube(int amount) {
@@ -54,8 +99,8 @@ public class CCubesBlocks
 		ItemStack cube = new ItemStack(Material.LAPIS_BLOCK, amount);
 		ItemMeta meta = cube.getItemMeta();
 		meta.setDisplayName(ChatColor.AQUA + "Chance Cube");
-		meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, chance, false);
-		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		PersistentDataContainer container = meta.getPersistentDataContainer();
+		container.set(DATA, new ChanceCubeDataType(), new ChanceCubeData(ChanceCubeType.CHANCE_CUBE, chance));
 		cube.setItemMeta(meta);
 		return cube;
 	}
@@ -64,8 +109,8 @@ public class CCubesBlocks
 		ItemStack cube = new ItemStack(Material.LAPIS_BLOCK, amount);
 		ItemMeta meta = cube.getItemMeta();
 		meta.setDisplayName(ChatColor.AQUA + "Compact Giant Cube");
-		meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, false);
-		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		PersistentDataContainer container = meta.getPersistentDataContainer();
+		container.set(DATA, new ChanceCubeDataType(), new ChanceCubeData(ChanceCubeType.COMPACT_GIANT_CHANCE_CUBE));
 		cube.setItemMeta(meta);
 		return cube;
 	}
@@ -78,8 +123,8 @@ public class CCubesBlocks
 		ItemStack d20 = new ItemStack(Material.LAPIS_BLOCK, amount);
 		ItemMeta meta = d20.getItemMeta();
 		meta.setDisplayName(ChatColor.AQUA + "Icosahedron");
-		meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, chance, false);
-		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		PersistentDataContainer container = meta.getPersistentDataContainer();
+		container.set(DATA, new ChanceCubeDataType(), new ChanceCubeData(ChanceCubeType.D20, chance));
 		d20.setItemMeta(meta);
 		return d20;
 	}

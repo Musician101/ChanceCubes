@@ -20,10 +20,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import net.minecraft.server.v1_14_R1.MojangsonParser;
-import net.minecraft.server.v1_14_R1.NBTCompressedStreamTools;
-import net.minecraft.server.v1_14_R1.NBTTagCompound;
-import net.minecraft.server.v1_14_R1.NBTTagList;
+import net.minecraft.server.v1_15_R1.MojangsonParser;
+import net.minecraft.server.v1_15_R1.NBTCompressedStreamTools;
+import net.minecraft.server.v1_15_R1.NBTTagCompound;
+import net.minecraft.server.v1_15_R1.NBTTagList;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
@@ -54,7 +54,7 @@ public class SchematicUtil
 		short length = nbtData.getShort("Length");
 		int paletteMax = nbtData.getInt("PaletteMax");
 		NBTTagCompound paletteNBT = nbtData.getCompound("Palette");
-		if (paletteMax != paletteNBT.d()) {
+		if (paletteMax != paletteNBT.e()) {
 			return null;
 		}
 

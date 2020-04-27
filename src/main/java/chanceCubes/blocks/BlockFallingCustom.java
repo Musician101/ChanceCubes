@@ -1,20 +1,21 @@
 package chanceCubes.blocks;
 
 import chanceCubes.rewards.rewardparts.OffsetBlock;
-import net.minecraft.server.v1_14_R1.Block;
-import net.minecraft.server.v1_14_R1.BlockFalling;
-import net.minecraft.server.v1_14_R1.BlockPosition;
-import net.minecraft.server.v1_14_R1.Blocks;
-import net.minecraft.server.v1_14_R1.EntityFallingBlock;
-import net.minecraft.server.v1_14_R1.EnumMoveType;
-import net.minecraft.server.v1_14_R1.GameRules;
-import net.minecraft.server.v1_14_R1.IBlockData;
-import net.minecraft.server.v1_14_R1.ItemStack;
-import net.minecraft.server.v1_14_R1.Material;
-import net.minecraft.server.v1_14_R1.NBTBase;
-import net.minecraft.server.v1_14_R1.NBTTagCompound;
-import net.minecraft.server.v1_14_R1.TileEntity;
-import net.minecraft.server.v1_14_R1.World;
+import net.minecraft.server.v1_15_R1.Block;
+import net.minecraft.server.v1_15_R1.BlockFalling;
+import net.minecraft.server.v1_15_R1.BlockPosition;
+import net.minecraft.server.v1_15_R1.Blocks;
+import net.minecraft.server.v1_15_R1.EntityFallingBlock;
+import net.minecraft.server.v1_15_R1.EnumMoveType;
+import net.minecraft.server.v1_15_R1.GameRules;
+import net.minecraft.server.v1_15_R1.IBlockData;
+import net.minecraft.server.v1_15_R1.ItemStack;
+import net.minecraft.server.v1_15_R1.Material;
+import net.minecraft.server.v1_15_R1.NBTBase;
+import net.minecraft.server.v1_15_R1.NBTTagCompound;
+import net.minecraft.server.v1_15_R1.TileEntity;
+import net.minecraft.server.v1_15_R1.Vec3D;
+import net.minecraft.server.v1_15_R1.World;
 import org.bukkit.Location;
 
 //TODO need to find a way to make this not rely on NMS
@@ -41,9 +42,10 @@ public class BlockFallingCustom extends EntityFallingBlock
 		}
 		else
 		{
-			this.lastX = this.locX;
-			this.lastY = this.locY;
-			this.lastZ = this.locZ;
+			Vec3D pos = getPositionVector();
+			this.lastX = pos.x;
+			this.lastY = pos.y;
+			this.lastZ = pos.z;
 
 			if(this.ticksLived++ == 0)
 			{
